@@ -5,14 +5,12 @@ AES128 aes128;
 
 enum command {
   UNSET,
-  //p
+  //P
   PLAINTEXT,
-  //n
+  //C
   CIPHERTEXT,
-  //k
+  //K
   KEY,
-  //s
-  CONFIG,
 };
 
 // https://the-x.cn/en-us/cryptography/Aes.aspx
@@ -37,8 +35,6 @@ String byteArrayToString(byte byteArray[16]){
 int charToLiteralHexValue(char c){
   if (c >= '0' && c <= '9')
     return c - '0' ;
-  if (c >= 'A' && c <= 'F')
-    return c - 'A' + 10 ;
   if (c >= 'a' && c <= 'f')
     return c - 'a' + 10 ;
   return -1;
@@ -58,21 +54,24 @@ void serialReset(){
   memset(out,0x00,sizeof(out));
 }
 
+
 void serialEvent(){
   char currentChar = Serial.read();
-  if(currentChar == 'x'){
+  if(currentChar == '\n'){
     //Reset command if end character seen
     if(currentCommand == PLAINTEXT){
+      //trigger
       aes128.encryptBlock(out, in);
-      Serial.println("n"+byteArrayToString(out)+"x");
+      //end trigger
+      Serial.print("C"+byteArrayToString(out)+"\n");
     }
     else if (currentCommand == CIPHERTEXT){
       aes128.decryptBlock(out, in);
-      Serial.println("p"+byteArrayToString(out)+"x");
+      Serial.print("P"+byteArrayToString(out)+"\n");
     }
     else if (currentCommand == KEY){
       aes128.setKey(in, sizeof(in));
-      Serial.println("k"+byteArrayToString(in)+"x");
+      Serial.print("K"+byteArrayToString(in)+"\n");
     }
     serialReset();
   }
@@ -95,16 +94,17 @@ void serialEvent(){
     }
     indexCounter++;
   }
-  else if (currentChar == 'p') {
+  else if (currentChar == 'P') {
     currentCommand = PLAINTEXT;
   }
-  else if (currentChar == 'n') {
+  else if (currentChar == 'C') {
     currentCommand = CIPHERTEXT;
   }
-  else if (currentChar == 'k') {
+  else if (currentChar == 'K') {
     currentCommand = KEY;
   }
 }
+
 
 void loop(){
 }
