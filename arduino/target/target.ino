@@ -5,12 +5,14 @@ AES128 aes128;
 
 enum command {
   UNSET,
-  //P
+  //p
   PLAINTEXT,
-  //C
+  //n
   CIPHERTEXT,
-  //K
+  //k
   KEY,
+  //s
+  CONFIG,
 };
 
 // https://the-x.cn/en-us/cryptography/Aes.aspx
@@ -41,7 +43,9 @@ int charToLiteralHexValue(char c){
 }
 
 void setup() {
-  Serial.begin(9600);
+  pinMode(8, OUTPUT);
+  digitalWrite(8, LOW);
+  Serial.begin(57600);
   serialReset();
   while (!Serial);
   aes128.setKey(in, sizeof(in));
@@ -61,8 +65,10 @@ void serialEvent(){
     //Reset command if end character seen
     if(currentCommand == PLAINTEXT){
       //trigger
+      digitalWrite(8, HIGH);
       aes128.encryptBlock(out, in);
       //end trigger
+      digitalWrite(8, LOW);
       Serial.print("C"+byteArrayToString(out)+"\n");
     }
     else if (currentCommand == CIPHERTEXT){
