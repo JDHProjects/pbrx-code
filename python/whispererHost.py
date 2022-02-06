@@ -9,11 +9,13 @@ class whispererHost():
     self.scope = chipwhisperer.scope()
     self.scope.default_setup()
     self.scope.clock.clkgen_freq = 16000000
+    self.scope.adc.samples = 5000
     self.target = target
 
   def attackTarget(self):
+    plaintext = communication.getRandomBlock("P")
     self.scope.arm()
-    receive = self.target.sendBlock(communication.getRandomBlock("P"))
+    receive = self.target.sendBlock(plaintext)
     ret = self.scope.capture()
 
     if ret:
@@ -21,21 +23,21 @@ class whispererHost():
 
     wave = self.scope.get_last_trace()
     if len(wave) >= 1:
-      return (receive, wave)
+      return (plaintext, receive, wave)
     else:
       errorAndExit("Trace empty")
 
 
-import matplotlib.pylab as plt
-
 if __name__ ==  "__main__":
+  import matplotlib.pylab as plt
+
   arduino = arduinoTarget.ArduinoTarget()
   cw = whispererHost(arduino)
 
   plt.figure(figsize=(16, 8), dpi=80)
-  plt.plot(cw.attackTarget()[1], 'r')
-  plt.plot(cw.attackTarget()[1], 'g')
-  plt.plot(cw.attackTarget()[1], 'b')
+  plt.plot(cw.attackTarget()[2], 'r')
+  plt.plot(cw.attackTarget()[2], 'g')
+  plt.plot(cw.attackTarget()[2], 'b')
   plt.show()
   input()
   plt.close()

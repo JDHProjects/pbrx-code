@@ -71,3 +71,9 @@ def hexStringToString(message):
   for i in range(0, len(message)-1, 2):
     string+=chr(int(message[i:i+2],16))
   return string
+
+def blockToIntList(block):
+  output = []
+  for i in range(1, len(block)-1, 2):
+    output.append(int(chr(block[i])+chr(block[i+1]),16))
+  return output
