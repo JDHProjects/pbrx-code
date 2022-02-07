@@ -33,7 +33,10 @@ if __name__ ==  "__main__":
 
   arduino = arduinoTarget.ArduinoTarget()
   cw = whispererHost(arduino)
+  while(True):
+    cw.attackTarget()
 
+  '''
   plt.figure(figsize=(16, 8), dpi=80)
   plt.plot(cw.attackTarget()[2], 'r')
   plt.plot(cw.attackTarget()[2], 'g')
@@ -41,3 +44,4 @@ if __name__ ==  "__main__":
   plt.show()
   input()
   plt.close()
+  '''

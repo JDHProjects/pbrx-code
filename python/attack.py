@@ -10,8 +10,11 @@ if __name__ ==  "__main__":
   print(communication.blockToIntList(arduino.key))
   traceArray = []
   plaintextArray = []
-  for i in range(0,100):
+  analysis = analyse.Analysis(communication.blockToIntList(arduino.key))
+  for i in range(0,150):
     (plaintext, _, trace) = cw.attackTarget()
     plaintextArray.append(communication.blockToIntList(plaintext))
     traceArray.append(trace)
-  analyse.analyseResults(numpy.array(traceArray),plaintextArray)
+    analysis.addTrace(numpy.array(trace), communication.blockToIntList(plaintext))
+  print("second")
+  analyse.analyseResults(numpy.array(traceArray),plaintextArray,communication.blockToIntList(arduino.key))
