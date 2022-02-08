@@ -1,54 +1,50 @@
 import arduinoTarget
 import whispererHost
 import communication
-import analyse
 import analysis
+import basicAnalyse
 import numpy
 
-if __name__ ==  "__main__":
-  import matplotlib.pylab as plt
-  
-
-  arduino = arduinoTarget.ArduinoTarget()
-  cw = whispererHost.whispererHost(arduino)
+def cumulative(arduino, cw):
   print(communication.blockToIntList(arduino.key))
-  #traceArray = []
-  #plaintextArray = []
-  analysis = analysis.Analysis(communication.blockToIntList(arduino.key))
 
-  pgeMean = []
-  pgeMax = []
-  pgeMin = []
+  traceCount = 150 + 1
+  analyser = analysis.Analysis(communication.blockToIntList(arduino.key))
+  #analyser.load("data/equation")
+  
+  for i in range(1,traceCount):
+    (plaintext, _, trace) = cw.attackTarget()
+    analyser.addTrace(numpy.array(trace), communication.blockToIntList(plaintext))
+    if(i%10==0):
+      print(str(i)+" traces")
+    bestguess, _ = analyser.calc()
+
+  print(bestguess)
+  #analyser.save("data/equation")
+  analyser.generatePGEGraph()
+
+
+def single(arduino, cw):
+  print(communication.blockToIntList(arduino.key))
+  traceArray = []
+  plaintextArray = []
+
   traceCount = 200 + 1
 
   for i in range(1,traceCount):
     (plaintext, _, trace) = cw.attackTarget()
-    #plaintextArray.append(communication.blockToIntList(plaintext))
-    #traceArray.append(trace)
-    analysis.addTrace(numpy.array(trace), communication.blockToIntList(plaintext))
-    if(i%10==0):
-      print(str(i)+" traces")
-      bestguess, pge = analysis.calc()
-      pgeMean.append(numpy.mean(pge))
-      pgeMax.append(numpy.max(pge))
-      pgeMin.append(numpy.min(pge))
+    plaintextArray.append(communication.blockToIntList(plaintext))
+    traceArray.append(trace)
 
+  bestguess, pge = basicAnalyse.analyseResults(numpy.array(traceArray),plaintextArray,communication.blockToIntList(arduino.key))
   print(bestguess)
+  print(pge)
 
 
-  plt.figure()
-  traceNum = list(range(10, traceCount, 10))
-    
-  plt.plot(traceNum, pgeMean, 'r', label="PGE Mean")
-  plt.plot(traceNum, pgeMax, 'g', label="PGE Max")
-  plt.plot(traceNum, pgeMin, 'b', label="PGE Min")
-  plt.legend(loc="upper right")
-  plt.title('Partial Guessing Entropy of AES-128 ECB')
-  plt.xlabel('Trace Number')
-  plt.ylabel('Partial Guessing Entropy')
-  plt.show()
-
+if __name__ ==  "__main__":
   
-  #bestguess, pge = analyse.analyseResults(numpy.array(traceArray),plaintextArray,communication.blockToIntList(arduino.key))
-  #print(bestguess)
-  #print(pge)
+  arduino = arduinoTarget.ArduinoTarget()
+
+  cw = whispererHost.whispererHost(arduino)
+
+  single(arduino, cw)

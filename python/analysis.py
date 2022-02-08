@@ -1,4 +1,7 @@
 import numpy as np
+import pickle
+import matplotlib.pylab as plt
+import math
 
 class Analysis:
   class SubKey:
@@ -60,22 +63,92 @@ class Analysis:
         self.equD[kGuess] += hwValue ** 2
         self.equE[kGuess] += trace ** 2
 
-  def calc(self):
-    bestguess = []
-    pge = []
-    for subkey in self.subkeys:
-      (bg, pg) = subkey.calc(self.tNum)
-      bestguess.append(bg)
-      pge.append(pg)
-    return (bestguess, pge)
+    def save(self):
+      return [self.equA, self.equB, self.equC, self.equD, self.equE, self.index, self.subkey]
 
-  def __init__(self, key):
+    def load(self, data):
+      self.equA = data[0]
+      self.equB = data[1]
+      self.equC = data[2]
+      self.equD = data[3]
+      self.equE = data[4]
+
+      self.index = data[5]
+      self.subkey = data[6]
+
+  def __init__(self, key=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]):
     self.tNum = 0
     self.subkeys = []
     for i in range(0, 16):
       self.subkeys.append(self.SubKey(i, key[i]))
+    self.pges = []
+    self.bestGuesses = []
+    self.tNums = []
+
+  def calc(self):
+    bestGuess = []
+    pge = []
+    for subkey in self.subkeys:
+      (bg, pg) = subkey.calc(self.tNum)
+      bestGuess.append(bg)
+      pge.append(pg)
+    self.pges.append(pge)
+    self.bestGuesses.append(bestGuess)
+    self.tNums.append(self.tNum)
+    return (bestGuess, pge)
 
   def addTrace(self, trace, plaintext):
     self.tNum += 1
     for subkey in self.subkeys:
       subkey.updateEquations(trace, plaintext)
+  
+  def save(self, filename):
+    analysisSave = []
+    for subkey in self.subkeys:
+      analysisSave.append(subkey.save())
+    analysisSave.append(self.tNum)
+    analysisSave.append(self.pges)
+    analysisSave.append(self.bestGuesses)
+    analysisSave.append(self.tNums)
+    with open(filename, 'wb') as writeFile:
+      pickle.dump(analysisSave, writeFile)
+
+  def load(self, filename):
+    analysisLoad = []
+    with open (filename, 'rb') as readFile:
+      analysisLoad = pickle.load(readFile)
+    for subkey in self.subkeys:
+      subkey.load(analysisLoad[subkey.index])
+    self.tNum = analysisLoad[16]
+    self.pges = analysisLoad[17]
+    self.bestGuesses = analysisLoad[18]
+    self.tNums = analysisLoad[19]
+
+  def logging(self, num):
+    if num == 0:
+      return 0
+    return num
+
+  def generatePGEGraph(self):
+    pgeMean = []
+    pgeMax = []
+    pgeMin = []
+    for i in range(0, len(self.tNums)):
+      pgeMean.append(self.logging(np.mean(self.pges[i])))
+      pgeMax.append(self.logging(np.max(self.pges[i])))
+      pgeMin.append(self.logging(np.min(self.pges[i])))
+    plt.figure()
+    plt.autoscale(False)
+
+    plt.plot(self.tNums, pgeMean, 'r', label="PGE Mean")
+    plt.plot(self.tNums, pgeMax, 'g', label="PGE Max")
+    plt.plot(self.tNums, pgeMin, 'b', label="PGE Min")
+    plt.legend(loc="upper right")
+    plt.xlim(0, self.tNum)
+    plt.ylim(0, 256)
+    plt.title('Partial Guessing Entropy of AES-128 ECB')
+    plt.xlabel('Trace Number')
+    plt.ylabel('Partial Guessing Entropy')
+    plt.show()
+
+
