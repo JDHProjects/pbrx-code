@@ -8,9 +8,9 @@ import numpy
 def cumulative(arduino, cw):
   print(communication.blockToIntList(arduino.key))
 
-  traceCount = 150 + 1
+  traceCount = 250 + 1
   analyser = analysis.Analysis(communication.blockToIntList(arduino.key))
-  #analyser.load("data/equation")
+  #analyser.load("data/equation2")
   
   for i in range(1,traceCount):
     (plaintext, _, trace) = cw.attackTarget()
@@ -20,7 +20,7 @@ def cumulative(arduino, cw):
     bestguess, _ = analyser.calc()
 
   print(bestguess)
-  #analyser.save("data/equation")
+  analyser.save("data/equation")
   analyser.generatePGEGraph()
 
 

@@ -5,12 +5,12 @@ import math
 
 class Analysis:
   class SubKey:
-    def __init__(self, index, subkey):
-      self.equA = np.array([np.zeros(5000)]*256)
-      self.equB = np.array([np.zeros(5000)]*256)
-      self.equC = np.array([np.zeros(5000)]*256)
-      self.equD = np.array([np.zeros(5000)]*256)
-      self.equE = np.array([np.zeros(5000)]*256)
+    def __init__(self, index, subkey, traceSize):
+      self.equA = np.array([np.zeros(traceSize)]*256)
+      self.equB = np.array([np.zeros(traceSize)]*256)
+      self.equC = np.array([np.zeros(traceSize)]*256)
+      self.equD = np.array([np.zeros(traceSize)]*256)
+      self.equE = np.array([np.zeros(traceSize)]*256)
 
       self.index = index
       self.subkey = subkey
@@ -76,11 +76,11 @@ class Analysis:
       self.index = data[5]
       self.subkey = data[6]
 
-  def __init__(self, key=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]):
+  def __init__(self, key=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], traceSize=5000):
     self.tNum = 0
     self.subkeys = []
     for i in range(0, 16):
-      self.subkeys.append(self.SubKey(i, key[i]))
+      self.subkeys.append(self.SubKey(i, key[i], traceSize))
     self.pges = []
     self.bestGuesses = []
     self.tNums = []
