@@ -1,7 +1,5 @@
 import numpy as np
 import pickle
-import matplotlib.pylab as plt
-import math
 
 class Analysis:
   class SubKey:
@@ -124,31 +122,5 @@ class Analysis:
     self.bestGuesses = analysisLoad[18]
     self.tNums = analysisLoad[19]
 
-  def logging(self, num):
-    if num == 0:
-      return 0
-    return num
-
-  def generatePGEGraph(self):
-    pgeMean = []
-    pgeMax = []
-    pgeMin = []
-    for i in range(0, len(self.tNums)):
-      pgeMean.append(self.logging(np.mean(self.pges[i])))
-      pgeMax.append(self.logging(np.max(self.pges[i])))
-      pgeMin.append(self.logging(np.min(self.pges[i])))
-    plt.figure()
-    plt.autoscale(False)
-
-    plt.plot(self.tNums, pgeMean, 'r', label="PGE Mean")
-    plt.plot(self.tNums, pgeMax, 'g', label="PGE Max")
-    plt.plot(self.tNums, pgeMin, 'b', label="PGE Min")
-    plt.legend(loc="upper right")
-    plt.xlim(0, self.tNum)
-    plt.ylim(0, 256)
-    plt.title('Partial Guessing Entropy of AES-128 ECB')
-    plt.xlabel('Trace Number')
-    plt.ylabel('Partial Guessing Entropy')
-    plt.show()
 
 
