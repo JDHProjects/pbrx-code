@@ -49,7 +49,7 @@ class UI():
         self.sendCiphertext()
       elif (currentCommand == command.KEY):
         self.arduino.setKey(input())
-        print("Key set to: "+self.arduino.key)
+        print("Key set to: "+str(self.arduino.key))
       elif (currentCommand == command.ENCODE):
         print(communication.stringToHexString(input()))
       elif (currentCommand == command.DECODE):

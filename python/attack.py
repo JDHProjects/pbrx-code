@@ -3,7 +3,7 @@ import whispererHost
 import communication
 import analysis
 import visualise
-import basicAnalyse
+import basicAnalysis
 import numpy
 
 def cumulative(arduino, cw):
@@ -46,18 +46,18 @@ def single(arduino, cw):
     plaintextArray.append(communication.blockToIntList(plaintext))
     traceArray.append(trace)
 
-  bestguess, pge = basicAnalyse.analyseResults(numpy.array(traceArray),plaintextArray,communication.blockToIntList(arduino.key))
+  bestguess, pge = basicAnalysis.analyse(numpy.array(traceArray),plaintextArray,communication.blockToIntList(arduino.key))
   print(bestguess)
   print(pge)
 
 
 if __name__ ==  "__main__":
 
-  arduino = arduinoTarget.ArduinoTarget()
-  cw = whispererHost.whispererHost(arduino)
-  cumulative(arduino, cw)
+  #arduino = arduinoTarget.ArduinoTarget()
+  #cw = whispererHost.whispererHost(arduino)
+  #cumulative(arduino, cw)
 
 
-  #visualiser = visualise.Visualise(300, 10)
-  #visualiser.load("data/10-ohm-complete.pge")
-  #visualiser.generateMeanPGEGraph()
+  visualiser = visualise.Visualise(300, 10)
+  visualiser.load("data/10-ohm-complete.pge")
+  visualiser.generateMeanPGEGraph()

@@ -1,7 +1,7 @@
 import numpy as np
 from tqdm import tqdm
 
-def analyseResults(trace_array, textin_array, key):
+def analyse(trace_array, textin_array, key):
 
   HW = [bin(n).count("1") for n in range(0, 256)]
 
@@ -9,9 +9,8 @@ def analyseResults(trace_array, textin_array, key):
   numpoint = np.shape(trace_array)[1] #samples per trace
 
   pt = textin_array
-  
 
-  return singleThreaded(HW, numtraces, numpoint, pt, trace_array, key)
+  return run(HW, numtraces, numpoint, pt, trace_array, key)
 
 def intermediate(pt, keyguess):
     sbox = (
@@ -34,7 +33,7 @@ def intermediate(pt, keyguess):
         
     return sbox[pt ^ keyguess]
 
-def singleThreaded( HW, numtraces, numpoint, pt, trace_array, key ):
+def run( HW, numtraces, numpoint, pt, trace_array, key ):
   bestguess = [0] * 16
   cparefs = [0] * 16
   pge = [0]*16
