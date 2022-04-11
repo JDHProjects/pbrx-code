@@ -7,16 +7,19 @@ import basicAnalysis
 import numpy
 
 def cumulative(arduino, cw):
-  print(communication.blockToIntList(arduino.key))
+  
 
-  traceCount = 300
-  traceInterval = 10
+  traceCount = 20000
+  traceInterval = 50
 
   #analyser.load("data/testing")
 
   visualiser = visualise.Visualise(traceInterval, traceCount)
+  visualiser.load("data/0-ohm-mean-100.pge")
 
-  for i in range(0,1):
+  for i in range(0,90):
+    arduino.setRandomKey()
+    print(communication.blockToIntList(arduino.key))
     analyser = analysis.Analysis(communication.blockToIntList(arduino.key),2500)
     print("attack: "+str(i))
     for j in range(0,traceCount):
@@ -25,12 +28,14 @@ def cumulative(arduino, cw):
       if(j%traceInterval==0):
         bestguess, pge = analyser.calc()
         print(str(j)+" traces: PGE sum = "+str(sum(pge)))
+        if (sum(pge)==0):
+          break
+      
 
-    visualiser.addPGEs(analyser.pges)
-    #visualiser.save("data/testing")
+    visualiser.addPGEs(analyser.getPGEs(traceInterval,traceCount))
+    visualiser.save("data/0-ohm-mean-100.pge")
 
-  print(bestguess)
-  visualiser.generatePGEGraphByIndex(0)
+  #visualiser.generateMeanPGEGraph()
   #analyser.save("data/equation")
 
 
@@ -58,6 +63,7 @@ if __name__ ==  "__main__":
   #cumulative(arduino, cw)
 
 
-  visualiser = visualise.Visualise(300, 10)
-  visualiser.load("data/10-ohm-complete.pge")
+  visualiser = visualise.Visualise(20000, 50)
+  visualiser.load("data/0-ohm-mean-40.pge")
+  print(len(visualiser.listOfPges))
   visualiser.generateMeanPGEGraph()

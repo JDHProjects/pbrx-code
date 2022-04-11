@@ -42,17 +42,18 @@ class Visualise:
     plt.show()
 
 
-  def generateMeanPGEGraph(self, title='Partial Guessing Entropy of AES-128 ECB (Mean of 100 Attacks)', xLabel='Trace Number', yLabel='Mean Partial Guessing Entropy'):
-    self._GeneratePGEGraph(np.mean(np.array(self.listOfPges), axis=0), title, xLabel, yLabel)
+  def generateMeanPGEGraph(self, saveName="", title='Partial Guessing Entropy of AES-128 ECB (Mean of 100 Attacks)', xLabel='Trace Number', yLabel='Mean Partial Guessing Entropy'):
+    inTitle='Partial Guessing Entropy of AES-128 ECB (Mean of '+str(len(self.listOfPges))+' Attacks)'
+    self._GeneratePGEGraph(np.mean(np.array(self.listOfPges), axis=0), saveName, inTitle, xLabel, yLabel)
 
 
-  def generatePGEGraphByIndex(self, index, title='Partial Guessing Entropy of AES-128 ECB', xLabel='Trace Number', yLabel='Partial Guessing Entropy'):
+  def generatePGEGraphByIndex(self, index, saveName="", title='Partial Guessing Entropy of AES-128 ECB', xLabel='Trace Number', yLabel='Partial Guessing Entropy'):
     if(index<0 or index > len(self.listOfPges)):
       errorAndExit("PGE index out of range")
-    self._GeneratePGEGraph(self.listOfPges[index], title, xLabel, yLabel)
+    self._GeneratePGEGraph(self.listOfPges[index], saveName, title, xLabel, yLabel)
 
 
-  def _GeneratePGEGraph(self, pges, title, xLabel, yLabel):
+  def _GeneratePGEGraph(self, pges, saveName, title, xLabel, yLabel):
     pgeMean = []
     pgeMax = []
     pgeMin = []
@@ -72,6 +73,9 @@ class Visualise:
     plt.title(title)
     plt.xlabel(xLabel)
     plt.ylabel(yLabel)
+    if(saveName!=""):
+      plt.savefig(saveName)
+      return
     plt.show()
 
   def save(self, filename):

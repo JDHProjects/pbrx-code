@@ -38,6 +38,14 @@ class ArduinoTarget():
     self.key = ret
     return ret
 
+  def setRandomKey(self):
+    block = communication.getRandomBlock("K")
+    ret = self.sendBlock(block)
+    if(block != ret):
+      errorAndExit("Key returned by Arduino not equal to set key")
+    self.key = ret
+    return ret
+
   def sendBlock(self, block):
     self.serial.write(block)
     return self.serial.readline()

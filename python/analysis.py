@@ -94,6 +94,12 @@ class Analysis:
     self.bestGuesses.append(bestGuess)
     self.tNums.append(self.tNum)
     return (bestGuess, pge)
+  
+  def getPGEs(self, interval=-1, traceCount=-1):
+    pgeTotal = traceCount//interval
+    if (interval == -1 or traceCount == -1 or pgeTotal == len(self.pges)):
+      return self.pges
+    return self.pges + [[0]*16] * (pgeTotal - len(self.pges))
 
   def addTrace(self, trace, plaintext):
     self.tNum += 1
@@ -121,6 +127,4 @@ class Analysis:
     self.pges = analysisLoad[17]
     self.bestGuesses = analysisLoad[18]
     self.tNums = analysisLoad[19]
-
-
 
