@@ -1,4 +1,5 @@
 import numpy as np
+from tqdm import tqdm
 
 def analyse(trace_array, textin_array, key):
 
