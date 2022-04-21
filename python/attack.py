@@ -59,7 +59,7 @@ def single(arduino, cw):
 if __name__ ==  "__main__":
 
   #arduino = arduinoTarget.ArduinoTarget()
-  #cw = whispererHost.whispererHost(arduino)
+  #cw = whispererHost.WhispererHost(arduino)
   #cumulative(arduino, cw)
 
 

@@ -73,7 +73,7 @@ class UI():
 
 if __name__ ==  "__main__":
   arduino = arduinoTarget.ArduinoTarget()
-  cw = whispererHost.whispererHost(arduino)
+  cw = whispererHost.WhispererHost(arduino)
   ui = UI(arduino, cw)
 
   ui.mainLoop()
