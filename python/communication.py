@@ -77,3 +77,9 @@ def blockToIntList(block):
   for i in range(1, len(block)-1, 2):
     output.append(int(chr(block[i])+chr(block[i+1]),16))
   return output
+
+def intListToString(block):
+  output = ""
+  for i in range(0, len(block)):
+    output+=chr(block[i])
+  return repr(output)

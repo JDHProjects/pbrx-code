@@ -9,15 +9,15 @@ import numpy
 def cumulative(arduino, cw):
   
 
-  traceCount = 20000
-  traceInterval = 50
+  traceCount = 500
+  traceInterval = 10
 
   #analyser.load("data/testing")
 
   visualiser = visualise.Visualise(traceInterval, traceCount)
-  visualiser.load("data/0-ohm-mean-100.pge")
+  #visualiser.load("data/0-ohm-mean-40.pge")
 
-  for i in range(0,90):
+  for i in range(0,1):
     arduino.setRandomKey()
     print(communication.blockToIntList(arduino.key))
     analyser = analysis.Analysis(communication.blockToIntList(arduino.key),2500)
@@ -27,15 +27,14 @@ def cumulative(arduino, cw):
       analyser.addTrace(numpy.array(trace[1000:3500]), communication.blockToIntList(plaintext))
       if(j%traceInterval==0):
         bestguess, pge = analyser.calc()
-        print(str(j)+" traces: PGE sum = "+str(sum(pge)))
+        print(str(j)+" traces:\nPGE sum = "+str(sum(pge)))
+        print("Best Guess = "+communication.intListToString(bestguess))
         if (sum(pge)==0):
           break
-      
 
     visualiser.addPGEs(analyser.getPGEs(traceInterval,traceCount))
-    visualiser.save("data/0-ohm-mean-100.pge")
-
-  #visualiser.generateMeanPGEGraph()
+    #visualiser.save("data/100-ohm-mean-100.pge")
+  #visualiser.generatePGEGraphByIndex(0)
   #analyser.save("data/equation")
 
 
@@ -58,12 +57,11 @@ def single(arduino, cw):
 
 if __name__ ==  "__main__":
 
-  #arduino = arduinoTarget.ArduinoTarget()
-  #cw = whispererHost.whispererHost(arduino)
-  #cumulative(arduino, cw)
+  arduino = arduinoTarget.ArduinoTarget()
+  cw = whispererHost.whispererHost(arduino)
+  cumulative(arduino, cw)
 
-
-  visualiser = visualise.Visualise(20000, 50)
-  visualiser.load("data/0-ohm-mean-40.pge")
-  print(len(visualiser.listOfPges))
-  visualiser.generateMeanPGEGraph()
+  #visualiser = visualise.Visualise(1000, 10)
+  #visualiser.load("data/100-ohm-mean-100.pge")
+  #print(len(visualiser.listOfPges))
+  #visualiser.generateMeanPGEGraph()
