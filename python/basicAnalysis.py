@@ -1,5 +1,4 @@
 import numpy as np
-from tqdm import tqdm
 
 def analyse(trace_array, textin_array, key):
 
@@ -37,7 +36,7 @@ def run( HW, numtraces, numpoint, pt, trace_array, key ):
   bestguess = [0] * 16
   cparefs = [0] * 16
   pge = [0]*16
-  for bnum in tqdm(range(0,16), desc='Attacking subkeys', leave=False, position=2):
+  for bnum in range(0,16):
     cpaoutput = [0] * 256
     maxcpa = [0] * 256
     for kguess in range(0, 256):
