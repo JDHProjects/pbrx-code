@@ -4,7 +4,7 @@ import communication
 from common import errorAndExit
 import arduinoTarget
 
-class whispererHost():
+class WhispererHost():
   def __init__(self, target):
     self.scope = chipwhisperer.scope()
     self.scope.default_setup()
@@ -32,7 +32,7 @@ if __name__ ==  "__main__":
   import matplotlib.pylab as plt
 
   arduino = arduinoTarget.ArduinoTarget()
-  cw = whispererHost(arduino)
+  cw = WhispererHost(arduino)
 
   plt.figure(figsize=(16, 8), dpi=80)
   plt.plot(cw.attackTarget()[2][1000:2500], 'r')

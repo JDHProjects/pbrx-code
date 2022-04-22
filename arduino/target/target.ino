@@ -11,8 +11,6 @@ enum command {
   CIPHERTEXT,
   //k
   KEY,
-  //s
-  CONFIG,
 };
 
 // https://the-x.cn/en-us/cryptography/Aes.aspx

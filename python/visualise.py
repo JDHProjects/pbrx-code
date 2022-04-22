@@ -15,7 +15,7 @@ class Visualise:
     self.listOfPges.append(pges)
 
 
-  def generateAllPGEGraph(self, title='Partial Guessing Entropy of AES-128 ECB', xLabel='Trace Number', yLabel='Partial Guessing Entropy'):
+  def generateAllPGEGraph(self, saveName="", title='Partial Guessing Entropy of AES-128 ECB', xLabel='Trace Number', yLabel='Partial Guessing Entropy'):
     plt.figure()
     plt.autoscale(False)
 
@@ -39,6 +39,9 @@ class Visualise:
     plt.title(title)
     plt.xlabel(xLabel)
     plt.ylabel(yLabel)
+    if(saveName!=""):
+      plt.savefig(saveName)
+      return
     plt.show()
 
 
