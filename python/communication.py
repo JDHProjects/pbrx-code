@@ -2,11 +2,6 @@ import re
 import math
 import random
 
-def encodeInput(input, startChar):
-  if(isInputHexString(input)):
-    return hexStringToSerialEncode(input, startChar)
-  return stringToSerialEncode(input, startChar)
-
 def hexStringToSerialEncode(message, startChar):
   messageBlocks = []
   
@@ -33,6 +28,11 @@ def isInputHexString(input):
   if(re.fullmatch('([a-fA-F0-9][a-fA-F0-9])*', input) == None):
     return False
   return True
+
+def encodeInput(input, startChar):
+  if(isInputHexString(input)):
+    return hexStringToSerialEncode(input, startChar)
+  return stringToSerialEncode(input, startChar)
 
 def serialEncodeToString(messageBlocks):
   message = ""

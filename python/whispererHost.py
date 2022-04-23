@@ -35,7 +35,7 @@ if __name__ ==  "__main__":
   cw = WhispererHost(arduino)
 
   plt.figure(figsize=(16, 8), dpi=80)
-  plt.plot(cw.attackTarget()[2][1000:2500], 'r')
-  plt.plot(cw.attackTarget()[2][1000:2500], 'g')
-  plt.plot(cw.attackTarget()[2][1000:2500], 'b')
+  plt.plot(cw.attackTarget()[2][1000:3500], 'r')
+  plt.plot(cw.attackTarget()[2][1000:3500], 'g')
+  plt.plot(cw.attackTarget()[2][1000:3500], 'b')
   plt.show()
