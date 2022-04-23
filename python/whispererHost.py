@@ -1,8 +1,6 @@
 import chipwhisperer
-
 import communication
 from common import errorAndExit
-import arduinoTarget
 
 class WhispererHost():
   def __init__(self, target):
@@ -30,6 +28,7 @@ class WhispererHost():
 
 if __name__ ==  "__main__":
   import matplotlib.pylab as plt
+  import arduinoTarget
 
   arduino = arduinoTarget.ArduinoTarget()
   cw = WhispererHost(arduino)
@@ -39,5 +38,3 @@ if __name__ ==  "__main__":
   plt.plot(cw.attackTarget()[2][1000:2500], 'g')
   plt.plot(cw.attackTarget()[2][1000:2500], 'b')
   plt.show()
-  input()
-  plt.close()
