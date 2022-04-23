@@ -72,3 +72,26 @@ def run( HW, numtraces, numpoint, pt, trace_array, key ):
     pge[bnum] = list(cparefs[bnum]).index(key[bnum])
 
   return bestguess, pge
+
+if __name__ ==  "__main__":
+  import arduinoTarget
+  import whispererHost
+  import communication
+  
+  arduino = arduinoTarget.ArduinoTarget()
+  cw = whispererHost.WhispererHost(arduino)
+
+  print(communication.blockToIntList(arduino.key))
+  traceArray = []
+  plaintextArray = []
+
+  traceCount = 200 + 1
+
+  for i in range(1,traceCount):
+    (plaintext, _, trace) = cw.attackTarget()
+    plaintextArray.append(communication.blockToIntList(plaintext))
+    traceArray.append(trace)
+
+  bestguess, pge = analyse(np.array(traceArray),plaintextArray,communication.blockToIntList(arduino.key))
+  print(bestguess)
+  print(pge)

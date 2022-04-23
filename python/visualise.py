@@ -94,3 +94,8 @@ class Visualise:
       visualiseLoad = pickle.load(readFile)
     self.listOfPges = visualiseLoad[0]
     self.tNums = visualiseLoad[1]
+
+if __name__ ==  "__main__":
+  visualiser = Visualise(1000, 10)
+  visualiser.load("results/100-ohm-mean-100.pge")
+  visualiser.generateMeanPGEGraph()

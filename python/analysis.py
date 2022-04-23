@@ -128,3 +128,37 @@ class Analysis:
     self.bestGuesses = analysisLoad[18]
     self.tNums = analysisLoad[19]
 
+if __name__ ==  "__main__":
+  import arduinoTarget
+  import whispererHost
+  import communication
+  import analysis
+  import visualise
+  import numpy
+
+  arduino = arduinoTarget.ArduinoTarget()
+  cw = whispererHost.WhispererHost(arduino)
+
+  traceCount = 500
+  traceInterval = 10
+
+  #visualiser = visualise.Visualise(traceInterval, traceCount)
+  #visualiser.load("data/0-ohm-mean-40.pge")
+
+  for i in range(0,1):
+    arduino.setRandomKey()
+    print(communication.blockToIntList(arduino.key))
+    analyser = analysis.Analysis(communication.blockToIntList(arduino.key),2500)
+    print("attack: "+str(i))
+    for j in range(0,traceCount):
+      (plaintext, _, trace) = cw.attackTarget()
+      analyser.addTrace(numpy.array(trace[1000:3500]), communication.blockToIntList(plaintext))
+      if(j%traceInterval==0):
+        bestguess, pge = analyser.calc()
+        print(str(j)+" traces:\nPGE sum = "+str(sum(pge)))
+        print("Best Guess = "+communication.intListToString(bestguess))
+        if (sum(pge)==0):
+          break
+
+    #visualiser.addPGEs(analyser.getPGEs(traceInterval,traceCount))
+    #visualiser.save("data/100-ohm-mean-100.pge")
