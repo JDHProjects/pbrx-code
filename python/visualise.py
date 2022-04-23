@@ -1,7 +1,6 @@
 import numpy as np
 import pickle
 import matplotlib.pylab as plt
-from common import errorAndExit
 
 class Visualise:
   def __init__(self, tInterval, tNum):
@@ -11,7 +10,8 @@ class Visualise:
 
   def addPGEs(self, pges):
     if(len(self.tNums) != len(pges)):
-      errorAndExit("PGE interval not equal to existing data")
+      print("FATAL ERROR: PGE interval not equal to existing data")
+      exit()
     self.listOfPges.append(pges)
 
 
@@ -52,7 +52,8 @@ class Visualise:
 
   def generatePGEGraphByIndex(self, index, saveName="", title='Partial Guessing Entropy of AES-128 ECB', xLabel='Trace Number', yLabel='Partial Guessing Entropy'):
     if(index<0 or index > len(self.listOfPges)):
-      errorAndExit("PGE index out of range")
+      print("FATAL ERROR: PGE index out of range")
+      exit()
     self._GeneratePGEGraph(self.listOfPges[index], saveName, title, xLabel, yLabel)
 
 

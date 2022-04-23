@@ -1,6 +1,5 @@
 import chipwhisperer
 import communication
-from common import errorAndExit
 
 class WhispererHost():
   def __init__(self, target):
@@ -17,13 +16,15 @@ class WhispererHost():
     ret = self.scope.capture()
 
     if ret:
-      errorAndExit("Timeout happened during capture")
+      print("FATAL ERROR: Timeout happened during capture")
+      exit()
 
     wave = self.scope.get_last_trace()
     if len(wave) >= 1:
       return (plaintext, receive, wave)
     else:
-      errorAndExit("Trace empty")
+      print("FATAL ERROR: Trace empty")
+      exit()
 
 
 if __name__ ==  "__main__":

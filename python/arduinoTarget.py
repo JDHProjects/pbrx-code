@@ -1,7 +1,6 @@
 import time
 import serial
 import serial.tools.list_ports
-from common import errorAndExit
 import communication
 
 class ArduinoTarget():
@@ -16,25 +15,30 @@ class ArduinoTarget():
         self.serial.port = port.device
 
     if(self.serial.port == None):
-      errorAndExit("Arduino not found, is it connected?")
+      print("FATAL ERROR: Arduino not found, is it connected?")
+      exit()
     
     try:
       self.serial.open()
       time.sleep(2)
     except Exception as err:
       if(err.args[0] == 16):
-        errorAndExit("Cannot initialize serial connection to Arduino, is something else connected to "+self.serial.port+" ?")
-      errorAndExit(err)
+        print("FATAL ERROR: Cannot initialize serial connection to Arduino, is something else connected to "+self.serial.port+" ?")
+        exit()
+      print("FATAL ERROR: "+str(err))
+      exit()
     
     self.setKey("abcdefghijklmnop")
 
   def setKey(self, key):
     blocks = communication.encodeInput(key, "K")
     if(len(blocks) != 1):
-      errorAndExit("Key not equal to 128 bits")
+      print("FATAL ERROR: Key not equal to 128 bits")
+      exit()
     ret = self.sendBlock(blocks[0])
     if(blocks[0] != ret):
-      errorAndExit("Key returned by Arduino not equal to set key")
+      print("FATAL ERROR: Key returned by Arduino not equal to set key")
+      exit()
     self.key = ret
     return ret
 
@@ -42,7 +46,8 @@ class ArduinoTarget():
     block = communication.getRandomBlock("K")
     ret = self.sendBlock(block)
     if(block != ret):
-      errorAndExit("Key returned by Arduino not equal to set key")
+      print("FATAL ERROR: Key returned by Arduino not equal to set key")
+      exit()
     self.key = ret
     return ret
 
