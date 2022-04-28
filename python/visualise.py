@@ -1,5 +1,6 @@
 import numpy as np
 import pickle
+import math
 import matplotlib.pylab as plt
 
 class Visualise:
@@ -15,7 +16,7 @@ class Visualise:
     self.listOfPges.append(pges)
 
 
-  def generateAllPGEGraph(self, saveName="", title='Partial Guessing Entropy of AES-128 ECB', xLabel='Trace Number', yLabel='Partial Guessing Entropy'):
+  def generateAllPGEGraph(self, saveName="", title='Partial Guessing Entropy of AES-128 ECB', xLabel='Trace Number', yLabel='Partial Guessing Entropy', xLimit=-1):
     plt.figure()
     plt.autoscale(False)
 
@@ -34,7 +35,10 @@ class Visualise:
 
 
     plt.legend(["PGE Mean", "PGE Max", "PGE Min"], loc="upper right")
-    plt.xlim(0, self.tNums[-1])
+    if (xLimit == -1):
+      plt.xlim(0, self.tNums[-1])
+    else:
+      plt.xlim(0, xLimit)
     plt.ylim(0, 256)
     plt.title(title)
     plt.xlabel(xLabel)
@@ -45,19 +49,18 @@ class Visualise:
     plt.show()
 
 
-  def generateMeanPGEGraph(self, saveName="", title='Partial Guessing Entropy of AES-128 ECB (Mean of 100 Attacks)', xLabel='Trace Number', yLabel='Mean Partial Guessing Entropy'):
-    inTitle='Partial Guessing Entropy of AES-128 ECB (Mean of '+str(len(self.listOfPges))+' Attacks)'
-    self._GeneratePGEGraph(np.mean(np.array(self.listOfPges), axis=0), saveName, inTitle, xLabel, yLabel)
+  def generateMeanPGEGraph(self, saveName="", title='Partial Guessing Entropy of AES-128 ECB', xLabel='Trace Number', yLabel='Mean Partial Guessing Entropy', xLimit=-1):
+    inTitle=title+'\nMean of '+str(len(self.listOfPges))+' Attacks'
+    self._GeneratePGEGraph(np.mean(np.array(self.listOfPges), axis=0), saveName, inTitle, xLabel, yLabel, xLimit)
 
 
-  def generatePGEGraphByIndex(self, index, saveName="", title='Partial Guessing Entropy of AES-128 ECB', xLabel='Trace Number', yLabel='Partial Guessing Entropy'):
+  def generatePGEGraphByIndex(self, index, saveName="", title='Partial Guessing Entropy of AES-128 ECB', xLabel='Trace Number', yLabel='Partial Guessing Entropy', xLimit=-1):
     if(index<0 or index > len(self.listOfPges)):
       print("FATAL ERROR: PGE index out of range")
       exit()
-    self._GeneratePGEGraph(self.listOfPges[index], saveName, title, xLabel, yLabel)
+    self._GeneratePGEGraph(self.listOfPges[index], saveName, title, xLabel, yLabel, xLimit)
 
-
-  def _GeneratePGEGraph(self, pges, saveName, title, xLabel, yLabel):
+  def _GeneratePGEGraph(self, pges, saveName, title, xLabel, yLabel, xLimit):
     pgeMean = []
     pgeMax = []
     pgeMin = []
@@ -72,7 +75,10 @@ class Visualise:
     plt.plot(self.tNums, pgeMax, 'g', label="PGE Max")
     plt.plot(self.tNums, pgeMin, 'b', label="PGE Min")
     plt.legend(loc="upper right")
-    plt.xlim(0, self.tNums[-1])
+    if (xLimit == -1):
+      plt.xlim(0, self.tNums[-1])
+    else:
+      plt.xlim(0, xLimit)
     plt.ylim(0, 256)
     plt.title(title)
     plt.xlabel(xLabel)
@@ -81,6 +87,46 @@ class Visualise:
       plt.savefig(saveName)
       return
     plt.show()
+
+  def heatmapAtIndex(self, index, saveName="", title=""):
+    outputData = []
+    outputRow = []
+    xy = math.floor(math.sqrt(len(self.listOfPges)))
+    if(index not in self.tNums):
+      print("FATAL ERROR: Index not in PGE list")
+      exit()
+    realIndex = self.tNums.index(index)
+    for i in range(0,xy**2):
+      if (i > 0 and i % xy == 0):
+        outputData.append(outputRow)
+        outputRow = []
+      outputRow.append(sum(self.listOfPges[i][realIndex]))
+
+    fig, ax = plt.subplots()
+    im = ax.imshow(outputData)
+    plt.imshow(outputData, cmap='jet')
+    ax.set_xticks([])
+    ax.set_yticks([])
+    plt.colorbar()
+    plt.title((title))
+    if(saveName!=""):
+      plt.savefig(saveName)
+      return
+    plt.show()
+
+  def bestWorstAverage(self):
+    minimum = -1
+    maximum = 0
+    resultsList = []
+    for pge in self.listOfPges:
+      firstZero = pge.index([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
+      resultsList.append(firstZero)
+      if minimum > firstZero or minimum == -1:
+        minimum = firstZero
+      if maximum < firstZero:
+        maximum = firstZero
+    
+    return (self.tNums[minimum], self.tNums[maximum], self.tNums[round(np.mean(resultsList))])
 
   def save(self, filename):
     visualiseSave = []
@@ -98,5 +144,15 @@ class Visualise:
 
 if __name__ ==  "__main__":
   visualiser = Visualise(1000, 10)
-  visualiser.load("results/100-ohm-mean-100.pge")
-  visualiser.generateMeanPGEGraph()
+  ohm="0"
+  symbol=ohm+"$\Omega$"
+  if(ohm == "0"):
+    symbol="No"
+
+  visualiser.load("results/"+ohm+"-ohm-mean-100.pge")
+  (best, worst, average) = visualiser.bestWorstAverage()
+  print(ohm+" OHM RESULTS\n-------------\nbest: "+str(best)+"\nworst: "+str(worst)+"\naverage:"+str(average))
+  
+  visualiser.heatmapAtIndex(average, title="Heatmap of PGE Sum of AES-128 ECB - "+symbol+" Shunt Resistor\nAfter Analysis of "+str(average)+" Power Traces")
+  visualiser.generatePGEGraphByIndex(1, title="Partial Guessing Entropy of AES-128 ECB - "+symbol+" Shunt Resistor", xLimit=average+50)
+  visualiser.generateMeanPGEGraph(title="Partial Guessing Entropy of AES-128 ECB - "+symbol+" Shunt Resistor", xLimit=average+50)
