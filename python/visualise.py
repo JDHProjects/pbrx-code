@@ -101,6 +101,7 @@ class Visualise:
         outputData.append(outputRow)
         outputRow = []
       outputRow.append(sum(self.listOfPges[i][realIndex]))
+    outputData.append(outputRow)
 
     fig, ax = plt.subplots()
     im = ax.imshow(outputData)
